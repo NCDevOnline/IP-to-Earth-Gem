@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file was automatically generated for Expedited Addons by APIMATIC v2.0 ( https://apimatic.io ) on 06/03/2016
 
 module IpToEarth
@@ -7,7 +9,9 @@ module IpToEarth
     # @param [Array] The parameters to replace in the url
     def self.append_url_with_template_parameters(query_builder, parameters)
       # perform parameter validation
-      raise ArgumentError, 'Given value for parameter \"query_builder\" is invalid.' unless query_builder.instance_of? String
+      unless query_builder.instance_of? String
+        raise ArgumentError, 'Given value for parameter \"query_builder\" is invalid.'
+      end
 
       # return if there are no parameters to replace
       if parameters.nil?
@@ -20,14 +24,14 @@ module IpToEarth
           if value.nil?
             replace_value = ''
           elsif value.instance_of? Array
-            value.map!{|element| CGI.escape(element.to_s)}
+            value.map! { |element| CGI.escape(element.to_s) }
             replace_value = value.join('/')
           else
             replace_value = CGI.escape(value.to_s)
           end
 
           # find the template parameter and replace it with its value
-          query_builder = query_builder.gsub('{' + key.to_s + '}', replace_value)
+          query_builder = query_builder.gsub("{#{key}}", replace_value)
         end
       end
       query_builder
@@ -38,14 +42,16 @@ module IpToEarth
     # @param [Array] The parameters to append
     def self.append_url_with_query_parameters(query_builder, parameters)
       # perform parameter validation
-      raise ArgumentError, 'Given value for parameter \"query_builder\" is invalid.' unless query_builder.instance_of? String
+      unless query_builder.instance_of? String
+        raise ArgumentError, 'Given value for parameter \"query_builder\" is invalid.'
+      end
 
       # return if there are no parameters to replace
       if parameters.nil?
         query_builder
       else
         # remove any nil values
-        parameters = parameters.reject { |_key, value| value.nil? }
+        parameters = parameters.compact
 
         # does the query string already has parameters
         has_params = query_builder.include? '?'
@@ -64,34 +70,34 @@ module IpToEarth
       raise ArgumentError, 'Invalid Url.' unless url.instance_of? String
 
       # ensure that the urls are absolute
-      matches = url.match(%r{^(https?:\/\/[^\/]+)})
+      matches = url.match(%r{^(https?://[^/]+)})
       raise ArgumentError, 'Invalid Url format.' if matches.nil?
 
       # get the http protocol match
       protocol = matches[1]
-      
+
       # check if parameters exist
       index = url.index('?')
 
       # remove redundant forward slashes
-      query = url[protocol.length...(index != nil ? index : url.length)]
-      query.gsub!(%r{\/\/+}, '/')
+      query = url[protocol.length...(index.nil? ? url.length : index)]
+      query.gsub!(%r{//+}, '/')
 
       # get the parameters
-      parameters = index != nil ? url[url.index('?')...url.length] : ""
+      parameters = index.nil? ? '' : url[url.index('?')...url.length]
 
       # return processed url
-      protocol + query  + parameters
-    end	
+      protocol + query + parameters
+    end
 
     # Form encodes a hash of parameters.
     # @param [Hash] The hash of parameters to encode.
     # @return [Hash] A hash with the same parameters form encoded.
     def self.form_encode_parameters(form_parameters)
-      encoded = Hash.new
+      encoded = {}
       form_parameters.each do |key, value|
-        encoded.merge!(APIHelper.form_encode value, key)
-      end 
+        encoded.merge!(APIHelper.form_encode(value, key))
+      end
       encoded
     end
 
@@ -100,23 +106,21 @@ module IpToEarth
     # @param [String] The name of the object.
     # @return [Hash] A form encoded representation of the object in the form of a hash.
     def self.form_encode(obj, instance_name)
-      retval = Hash.new
+      retval = {}
 
       # If this is a structure, resolve it's field names.
-      if obj.respond_to? :key_map
-        obj = obj.key_map
-      end
-      
+      obj = obj.key_map if obj.respond_to? :key_map
+
       # Create a form encoded hash for this object.
-      if obj == nil
-        nil         
+      if obj.nil?
+        nil
       elsif obj.instance_of? Array
         obj.each_with_index do |value, index|
-          retval.merge!(APIHelper.form_encode(value, instance_name + "[" + index.to_s + "]"))
+          retval.merge!(APIHelper.form_encode(value, "#{instance_name}[#{index}]"))
         end
       elsif obj.instance_of? Hash
         obj.each do |key, value|
-          retval.merge!(APIHelper.form_encode(value, instance_name + "[" + key + "]"))
+          retval.merge!(APIHelper.form_encode(value, "#{instance_name}[#{key}]"))
         end
       else
         retval[instance_name] = obj
@@ -129,13 +133,18 @@ end
 # extend types to support to_bool
 module ToBoolean
   def to_bool
-    return true if self == true || self.to_s.strip =~ /^(true|yes|y|1)$/i
-    return false
+    return true if self == true || to_s.strip =~ /^(true|yes|y|1)$/i
+
+    false
   end
 end
 
 class NilClass; include ToBoolean; end
+
 class TrueClass; include ToBoolean; end
+
 class FalseClass; include ToBoolean; end
+
 class Numeric; include ToBoolean; end
+
 class String; include ToBoolean; end

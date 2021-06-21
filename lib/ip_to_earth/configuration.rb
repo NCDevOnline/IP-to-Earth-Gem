@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file was automatically generated for Expedited Addons by APIMATIC v2.0 ( https://apimatic.io ) on 06/03/2016
 
 module IpToEarth
@@ -10,8 +12,7 @@ module IpToEarth
 
     # create the getters and setters
     class << self
-      attr_accessor :base_uri
-      attr_accessor :api_key
+      attr_accessor :base_uri, :api_key
     end
   end
 end

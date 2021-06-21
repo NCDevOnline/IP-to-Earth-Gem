@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 # This file was automatically generated for Expedited Addons by APIMATIC v2.0 ( https://apimatic.io ) on 06/03/2016
 
 module IpToEarth
   class Result
-
     # TODO: Write general description for this method
     # @return [Boolean]
     attr_accessor :valid
@@ -57,7 +58,6 @@ module IpToEarth
       @latitude = latitude
       @longitude = longitude
       @region = region
-
     end
 
     def method_missing(method_name)
@@ -72,19 +72,19 @@ module IpToEarth
 
     # Creates an instance of the object from a hash
     def self.from_hash(hash)
-      if hash == nil
+      if hash.nil?
         nil
       else
         # Extract variables from the hash
-        valid = hash["valid"]
-        country = hash["country"]
-        country_code = hash["country_code"]
-        hostname = hash["hostname"]
-        city = hash["city"]
-        ip = hash["ip"]
-        latitude = hash["latitude"]
-        longitude = hash["longitude"]
-        region = hash["region"]
+        valid = hash['valid']
+        country = hash['country']
+        country_code = hash['country_code']
+        hostname = hash['hostname']
+        city = hash['city']
+        ip = hash['ip']
+        latitude = hash['latitude']
+        longitude = hash['longitude']
+        region = hash['region']
         # Create object from extracted values
         Result.new(valid,
                    country,
